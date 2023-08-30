@@ -14,6 +14,10 @@ To run this project, you will need to add the following environment variables to
 
 `VITE_APP_INFURA_KEY` Your infura key
 
+## Choose your chain
+
+The project runs on the Ethereum Goerli testnet by default, if you want to test other chains, add the query parameter `chainId=0x89` at the end of the URL, other optional values are `0x1b59`, `0x13881`, `0x82751`, `0x2105`, `0x34816d`, `atlantic-2`.
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
