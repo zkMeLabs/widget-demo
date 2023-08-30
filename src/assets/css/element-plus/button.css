@@ -1,0 +1,44 @@
+.el-button {
+  height: 36px !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.el-button--large {
+  height: 48px !important;
+}
+.el-button--large.is-round {
+  border-radius: 29px !important;
+}
+
+.el-button.is-disabled, 
+.el-button.is-disabled:focus, 
+.el-button.is-disabled:hover {
+  background-color: var(--color-theme);
+  border-color: var(--color-theme);
+  opacity: .6;
+}
+
+.el-button.width-1 {
+  width: 160px;
+}
+
+.el-button.width-2 {
+  width: 260px;
+}
+
+.el-button.width-3 {
+  width: 100%;
+}
+
+.el-button.width-4 {
+  width: 155px;
+}
+
+.el-button.sty1-btn {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.el-button.sty2-btn {
+  height: 34px;
+}

@@ -1,0 +1,123 @@
+.txt-ovfl {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-right: 10px;
+}
+.txt-ovfl.nopadd {
+  padding-right: 0;
+}
+
+.txt-ovfl-row {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  padding-right: 10px;
+}
+.txt-ovfl-row.nopadd {
+  padding-right: 0;
+}
+.txt-ovfl-row.row2 {
+  -webkit-line-clamp: 2;
+}
+.txt-ovfl-row.row6 {
+  -webkit-line-clamp: 6;
+}
+
+.taplight, .taplight-bf {
+  position:relative;
+  cursor: pointer;
+  user-select: none;
+}
+.taplight:not(.invalid)::after,
+.taplight-bf:not(.invalid)::before {
+  content:"";
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:100%;
+  height:100%;
+  border: inherit;
+  border-radius: inherit;
+  border-color: #000;
+  transform: translate(-50%,-50%);
+  pointer-events:none;
+  transition:opacity .4s ease;
+  background: #000;
+  opacity: 0;
+}
+
+.taplight.invalid,
+.taplight-bf.invalid {
+  cursor: default;
+}
+.taplight:active::after,
+.taplight-bf:active::before {
+  opacity: 0.13;
+  transition-duration:0s;
+}
+
+.taplight2 {
+  transition:opacity .4s ease .05s;
+  user-select: none;
+  cursor: pointer;
+}
+
+.taplight3 {
+  user-select: none;
+  cursor: pointer;
+}
+.taplight3 .tap-chd {
+  transition:opacity .4s ease .05s;
+}
+.taplight2:active:not(.is-disabled),
+.taplight3:active .tap-chd {
+  opacity:.4;
+  transition-duration:0s;
+  transition-delay: 0s;
+}
+
+@keyframes checkboxAnimation {
+  10%, 90% {
+    transform: translate3d(3px, 0px, 0);
+  }
+  20%, 80% {
+    transform: translate3d(-6px, 0px, 0);
+  }
+  30%, 50%, 70% {
+    transform: translate3d(12px, 0px, 0);
+  }
+  40%, 60% {
+    transform: translate3d(-0px, 0px, 0);
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+
+::-webkit-scrollbar {
+  width: 18px;
+  height: 18px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(175, 175, 175, .5);
+}
+::-webkit-scrollbar-corner {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track {
+  border: 6px solid transparent;
+  background-clip: padding-box;
+  border-radius: 10px;
+}

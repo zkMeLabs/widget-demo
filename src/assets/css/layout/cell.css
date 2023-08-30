@@ -1,0 +1,9 @@
+.sty2-cell {
+  width: 510px;
+  height: 604px;
+  background: rgba(255, 255, 255, 1);
+  padding: 40px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  margin: 0 auto;
+}

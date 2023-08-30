@@ -1,0 +1,67 @@
+.mui-flex {
+  display: flex;
+}
+
+.mui-fl-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.mui-fl-col{
+  display: flex;
+  flex-direction: column;
+}
+
+.mui-fl-vert {
+  display: flex;
+  align-items: center;
+}
+
+.mui-fl-hori {
+  display: flex;
+  justify-content: center;
+}
+
+.mui-fl-central {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mui-fl-vert_start {
+  display: flex;
+  align-items: flex-start;
+}
+
+.mui-fl-vert_end {
+  display: flex;
+  align-items: flex-end;
+}
+
+.mui-fl-vert_str {
+  display: flex;
+  align-items: stretch;
+}
+
+.mui-fl-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mui-fl-btw {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mui-shr-0 {
+  flex-shrink: 0;
+}
+
+.mui-fl-1 {
+  flex: 1;
+}
+
+.mui-fl-1-ovhide {
+  flex: 1;
+  overflow-y: hidden;
+}

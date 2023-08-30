@@ -1,0 +1,10 @@
+html:root {
+  --el-color-primary: var(--vt-c-primary-1);
+  --el-color-primary-light-3: rgba(var(--vt-c-primary-1-rgb), 0.8);
+  --el-color-primary-light-7: rgba(var(--vt-c-primary-1-rgb), 0.4);
+  --el-color-primary-light-9: rgba(var(--vt-c-primary-1-rgb), 0.06);
+  --el-color-primary-dark-2: rgba(var(--vt-c-primary-1-rgb), 0.9);
+  --el-font-family: var(--vt-ff-harmony);
+  --el-border-radius-base: 29px;
+  --el-text-color-regular: var(--color-text-1)
+}

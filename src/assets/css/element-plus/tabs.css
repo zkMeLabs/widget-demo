@@ -1,0 +1,16 @@
+.el-tabs.sty1-tabs .el-tabs__header{
+   background-color: rgba(var(--vt-c-primary-1-rgb), 0.1);
+   border-radius: 30px;
+}
+.el-tabs.sty1-tabs .el-tabs__item {
+  padding: 0 20px !important;
+}
+.el-tabs.sty1-tabs .el-tabs__item.is-active {
+  color: #FFF;
+  font-weight: 600;
+  background-color: var(--color-theme);
+  border-radius: 20px;
+}
+.el-tabs__nav-wrap::after, .el-tabs__active-bar {
+  display: none;
+}

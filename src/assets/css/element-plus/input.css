@@ -1,0 +1,51 @@
+.el-input.sty1-input {
+  width: 60%;
+}
+.el-input.sty1-input .el-input__wrapper{
+  box-shadow: none;
+  background-color: transparent;
+}
+.el-input.sty1-input .el-input__inner{
+  text-align: right;
+  font-weight: 700;
+  font-size: 28px;
+}
+
+.el-input.sty2-input {
+  width: 100%;
+}
+.el-input.sty2-input .el-input__wrapper{
+  box-shadow: none;
+  background-color: #f4f4f4;
+}
+.el-input.sty2-input .el-input__inner{
+  /* text-align: right; */
+  /* font-weight: 700; */
+  font-size: 16px;
+}
+
+.el-input.sty3-input {
+  width: auto;
+}
+
+.el-input.sty3-input .el-input__wrapper {
+  box-shadow: none;
+  border-radius: 0;
+  background-color: transparent;
+  padding: 3px 0;
+}
+
+.el-input.sty3-input .el-input__inner {
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 36px;
+  color: #000000;
+}
+
+.el-input.sty3-input .el-input__inner::placeholder {
+  color: #AFAFAF;
+}
+
+.el-input.text-right input {
+  text-align: right;
+}

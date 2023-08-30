@@ -1,0 +1,11 @@
+@font-face {
+  font-family: "HarmonyOS Sans WF";
+  font-weight: normal;
+  src: url('/fonts/HarmonyOS_Sans_Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "HarmonyOS Sans WF";
+  font-weight: bold;
+  src: url('/fonts/HarmonyOS_Sans_Bold.ttf') format('truetype');
+}
