@@ -1,79 +1,93 @@
 import type { Ref } from "vue"
 import { extendFetch } from "@/utils/common"
 import type { KycStatus } from "@/types"
-import { useContract } from "./contract"
-import { getAccessToken, queryBindingDid } from "@/utils/zkme-api"
+import { verifyKYCWithApi } from "@/utils/zkme-api"
 import { useSearchParams } from "./common"
-import { useChain } from "./wallet"
-import { hasApproved } from '@/utils/cosmos'
+import { useContract } from "."
+import { DAPP_CONF } from "@/utils/config"
 
 export function useMchConf () {
   const { result: _appId } = useSearchParams('appId')
   const { result: _apiKey } = useSearchParams('apiKey')
   const { result: _dappAccount } = useSearchParams('dappAccount')
+  const { result: _programNo } = useSearchParams('programNo')
+  const { result: _verify } = useSearchParams('verify')
+  const { result: _theme } = useSearchParams('theme')
 
   const appId = computed(() => {
-    return _appId.value || import.meta.env.VITE_APP_APP_ID
+    return _appId.value || DAPP_CONF.appId
   })
 
   const apiKey = computed(() => {
-    return _apiKey.value || import.meta.env.VITE_APP_API_KEY
+    return _apiKey.value || DAPP_CONF.apiKey
   })
 
   const dappAccount = computed(() => {
-    return _dappAccount.value || import.meta.env.VITE_APP_DAPP_ACCOUNT
+    return _dappAccount.value || DAPP_CONF.dappAccount
+  })
+
+  const programNo = computed(() => {
+    return _programNo.value || ''
+  })
+
+  const verify = computed(() => {
+    return _verify.value || 'contract'
+  })
+
+  const theme = computed(() => {
+    if (['light', 'dark', 'auto'].includes(_theme.value)) {
+      return _theme.value
+    }
+    return 'auto'
   })
 
   return {
     appId,
     apiKey,
-    dappAccount
+    dappAccount,
+    programNo,
+    verify,
+    theme,
   }
 }
 
-export function useVerify (connectedAddress: Ref<string>, lv?: Ref<string>) {
+export function useVerify (connectedAddress: Ref<string>) {
   const kycStatus = ref<KycStatus>('unknown')
   const checkingApproval = ref(false)
-  const accessToken = ref('')
 
   const needKyc = computed(() => {
     return Boolean(connectedAddress.value && kycStatus.value === 'unauthorized')
   })
-  const { dappAccount } = useMchConf()
+  const { appId, dappAccount, verify: verifyMethod, programNo } = useMchConf()
 
-  const verify = async (address: string, kycType?: Ref<string>) => {
+  const verify = async (address: string) => {
     kycStatus.value = 'unknown'
     checkingApproval.value = true
 
-    if (kycType && kycType.value === '2') {
-      const isBound = await extendFetch(queryBindingDid(address))
-      kycStatus.value = isBound ? 'valid' : 'unauthorized'
-    } else {
-      try {
-        let isApproved: boolean
-        const { cluster } = useChain()
+    try {
+      let isApproved: boolean
 
-        if (cluster.value.type === 'cosmos') {
-          isApproved = await hasApproved(dappAccount.value, address)
-        } else {
-          const { contract } = useContract()
-          isApproved = await contract.hasApproved(dappAccount.value, address)
-        }
-        kycStatus.value = isApproved ? 'valid' : 'unauthorized'
-      } catch (err) {
-        console.log(err)
+      if (verifyMethod.value === 'api') {
+        isApproved = await extendFetch(verifyKYCWithApi(appId.value, address, programNo.value))
+      } else {
+        const { contract } = useContract()
+        isApproved = await contract.hasApproved(
+          dappAccount.value,
+          address
+        )
       }
+
+      kycStatus.value = isApproved ? 'valid' : 'unauthorized'
+    } catch (err) {
+      console.log(err)
     }
 
-    if (kycStatus.value !== 'valid' && !accessToken.value) {
-      accessToken.value = await getAccessToken()
-    }
     checkingApproval.value = false
   }
 
   watchEffect(async () => {
     if (connectedAddress.value) {
-      verify(connectedAddress.value, lv)
+      verify(connectedAddress.value)
     }
   })
 
@@ -82,6 +96,5 @@ export function useVerify (connectedAddress: Ref<string>, lv?: Ref<string>) {
     kycStatus,
     checkingApproval,
     needKyc,
-    accessToken,
   }
 }

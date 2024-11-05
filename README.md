@@ -16,7 +16,7 @@ To run this project, you will need to add the following environment variables to
 
 ## Choose your chain
 
-The project runs on the Ethereum Goerli testnet by default, if you want to test other chains, add the query parameter `chainId=0x89` at the end of the URL, other optional values are `0x1b59`, `0x13881`, `0x82751`, `0x2105`, `0x34816d`, `atlantic-2`.
+The project runs on the Polygon by default, if you want to test other chains, add the query parameter `chainId=0x38` at the end of the URL, other optional values are `0x1b59`, `0x38`, `0x2105`, `0xa9`, `0xa4b1`, `0x7e4`, `0x1771`, `0xc4`.
 
 ## Recommended IDE Setup
 

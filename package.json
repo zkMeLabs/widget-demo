@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 5176",
     "build": "run-p type-check build-only",
     "build-test": "run-p type-check 'build-only --mode build.test'",
     "build-only-test": "vite build --mode build.test",
@@ -13,23 +13,18 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "0.29.5",
-    "@cosmjs/proto-signing": "^0.31.0",
-    "@cosmjs/stargate": "0.29.5",
-    "@sei-js/core": "^3.0.1",
+    "@zkmelabs/widget": "^0.3.2",
     "bignumber.js": "^9.1.1",
     "buffer": "^6.0.3",
     "element-plus": "^2.2.28",
-    "ethers": "^6.6.4",
+    "ethers": "^6.13.4",
     "lottie-web": "^5.10.2",
-    "sjcl": "^1.0.8",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
     "@types/node": "^18.11.12",
-    "@types/sjcl": "^1.0.30",
     "@vitejs/plugin-basic-ssl": "^1.0.1",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",

@@ -19,9 +19,11 @@
 }
 .txt-ovfl-row.row2 {
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 .txt-ovfl-row.row6 {
   -webkit-line-clamp: 6;
+  line-clamp: 6;
 }
 
 .taplight, .taplight-bf {
@@ -100,24 +102,4 @@
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-
-::-webkit-scrollbar {
-  width: 18px;
-  height: 18px;
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgba(175, 175, 175, .5);
-}
-::-webkit-scrollbar-corner {
-  display: none;
-}
-
-::-webkit-scrollbar-thumb, ::-webkit-scrollbar-track {
-  border: 6px solid transparent;
-  background-clip: padding-box;
-  border-radius: 10px;
 }

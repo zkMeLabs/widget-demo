@@ -1,5 +1,6 @@
-import { useMchConf, useSearchParams } from '@/composables';
-import { NEST_API_URL, ZKME_API_URL } from '@/utils/config';
+import { useMchConf } from '@/composables';
+import { NEST_API_URL } from '@/utils/config';
+import { verifyKycWithZkMeServices } from '@zkmelabs/widget';
 
 export type ResultBody = {
   code: number
@@ -10,44 +11,21 @@ export type ResultBody = {
 
 const { appId, apiKey } = useMchConf()
 
-export async function queryBindingDid (connectedAddress: string): Promise<boolean> {
-  return fetch(ZKME_API_URL + '/appUserGrantMch/queryBindingDid', {
-    method: 'POST',
-    body: JSON.stringify({
-      mchNo: appId.value,
-      walletAddress: connectedAddress
-    })
-  })
-    .then(res => {
-      if (res.ok) return res.json()
-      else {
-        throw new Error(`${res.status} ${res.statusText}`)
-      }
-    })
-    .then((result: ResultBody) => {
-      if (result.code === 80000000) {
-        return result.data
-      } else {
-        return Promise.reject(result)
-      }
-    })
-    .catch((error) => {
-      throw error
-    })
-}
-
-export async function getAccessToken () {
-  const { result: lv } = useSearchParams('lv')
+export async function getAccessToken (): Promise<string> {
+  const options: Record<string, number> = {
+    apiModePermission: 0,
+    lv: 1
+  }
 
   return fetch(NEST_API_URL + '/api/token/get', {
     method: 'POST',
     headers: {
-      'Content-type': 'application/json'
+      'Content-type': 'application/json',
     },
     body: JSON.stringify({
       appId: appId.value,
       apiKey: apiKey.value,
-      lv: lv.value === '2' ? 2 : 1
+      ...options
     })
   })
     .then(res => {
@@ -66,4 +44,12 @@ export async function getAccessToken () {
     .catch((error) => {
       throw error
     })
+}
+
+export async function verifyKYCWithApi (appId: string, userAccount: string, programNo?: string): Promise<boolean> {
+  const { isGrant } = await verifyKycWithZkMeServices(appId, userAccount, {
+    programNo,
+    endpoint: NEST_API_URL
+  })
+  return isGrant
 }

@@ -1,19 +1,13 @@
-import type { ShallowRef } from "vue"
-import { BrowserProvider, formatEther, JsonRpcSigner } from "ethers"
-import { CLUSTERS, ZKME_POPUP_ORIGIN } from "@/utils/config"
+import { BrowserProvider, formatEther, JsonRpcProvider, JsonRpcSigner } from "ethers"
+import { CLUSTERS } from "@/utils/config"
 import { getSigner } from "@/utils/eth"
-import { getSigningCosmWasmClient } from "@sei-js/core"
-import type { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { GasPrice } from '@cosmjs/stargate'
-import { getOfflineSigner } from "@/utils/cosmos"
 
 let isFirstListen = true
 
 const connectedAddress = ref('')
 const signer = shallowRef<JsonRpcSigner>()
-const signingCosmWasmClient = shallowRef<SigningCosmWasmClient>()
 
-export function useWallet (popup?: ShallowRef<HTMLIFrameElement | undefined>) {
+export function useWallet () {
   const connecting = ref(false)
   const balance = ref('0')
 
@@ -30,38 +24,18 @@ export function useWallet (popup?: ShallowRef<HTMLIFrameElement | undefined>) {
     connecting.value = true
 
     try {
-      if (cluster.value.type === 'cosmos') {
-        const { address, offlineSigner } = await getOfflineSigner()
-  
-        const _signingCosmWasmClient = await getSigningCosmWasmClient(cluster.value.rpc.url, offlineSigner, {
-          gasPrice: GasPrice.fromString('0.25usei')
-        })
-  
-        connectedAddress.value = address
-        signingCosmWasmClient.value = _signingCosmWasmClient
-      } else {
-        // EVM
-        const _signer = await getSigner()
-        connectedAddress.value = _signer.address.toLowerCase()
-        signer.value = _signer
-      }
+      const _signer = await getSigner()
+      connectedAddress.value = _signer.address.toLowerCase()
+      signer.value = _signer
     } finally {
       connecting.value = false
     }
   }
 
   if (window.ethereum) {
-    isFirstListen && window.ethereum.on('accountsChanged', (accounts) => {
-      if (cluster.value.type === 'cosmos') {
-        return
-      }
+    isFirstListen && ethereum.on('accountsChanged', (accounts) => {
       accounts = accounts.map(acc => acc.toLowerCase())
 
-      popup?.value?.contentWindow?.postMessage({
-        event: 'accountsChanged',
-        data: accounts
-      }, ZKME_POPUP_ORIGIN)
-  
       connectedAddress.value = accounts[0] || ''
   
       if (connectedAddress.value) {
@@ -71,10 +45,7 @@ export function useWallet (popup?: ShallowRef<HTMLIFrameElement | undefined>) {
       }
     })
 
-    isFirstListen && window.ethereum.on('chainChanged', (e) => {
-      if (cluster.value.type === 'cosmos') {
-        return
-      }
+    isFirstListen && ethereum.on('chainChanged', (e) => {
       if (e !== cluster.value.rpc.chainId) {
         window.location.reload()
       } else if (connectedAddress.value) {
@@ -86,12 +57,7 @@ export function useWallet (popup?: ShallowRef<HTMLIFrameElement | undefined>) {
   }
 
   watchEffect(async () => {
-    if (cluster.value.type === 'cosmos') {
-      if (signingCosmWasmClient.value) {
-        const { amount } = await signingCosmWasmClient.value.getBalance(connectedAddress.value, 'usei')
-        balance.value = (Number(amount) / Math.pow(10, 6)).toString()
-      }
-    } else if (signer.value) {
+    if (signer.value) {
       try {
         const rp = await signer.value.provider.getBalance(connectedAddress.value)
         balance.value = formatEther(rp)
@@ -110,7 +76,6 @@ export function useWallet (popup?: ShallowRef<HTMLIFrameElement | undefined>) {
     connecting,
     connectedAddress,
     signer,
-    signingCosmWasmClient,
     balance,
     connBtnTxt
   }
@@ -128,7 +93,7 @@ export function useChain () {
       cid = url.searchParams.get('chainId') || ''
     }
 
-    !cid && (cid = '0x5')
+    !cid && (cid = '0x89')
     return cid.toLowerCase()
   })
 
@@ -141,12 +106,28 @@ export function useChain () {
   })
 
   const cluster = computed(() => {
-    return CLUSTERS[chainIdAsDec.value] || CLUSTERS['5']
+    return CLUSTERS[chainIdAsDec.value] || CLUSTERS['7001']
+  })
+
+  const provider = computed(() => {
+    return markRaw(new JsonRpcProvider(
+      cluster.value!.rpc.url,
+      Number(cluster.value.rpc.chainId),
+      {
+        staticNetwork: true,
+        ...(
+          cluster.value.rpc.batchMaxCount
+            ? { batchMaxCount: cluster.value.rpc.batchMaxCount }
+            : {}
+        )
+      }
+    ))
   })
 
   return {
     chainId,
     chainIdAsDec,
-    cluster
+    cluster,
+    provider,
   }
 }

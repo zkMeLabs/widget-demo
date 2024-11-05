@@ -1,42 +1,29 @@
 <script setup lang="ts">
-import { useWallet, useChain, useVerify, useZkMe, useStake, useMchConf } from '@/composables';
-import { ZKME_POPUP_ORIGIN } from '@/utils/config';
+import '@zkmelabs/widget/dist/style.css'
+import { useWallet, useChain, useVerify, useZkMe, useStake } from '@/composables';
 import { switchChain } from '@/utils/eth';
-
-const zkMePopupNode = shallowRef<HTMLIFrameElement>()
-
-const lv = computed(() => {
-  const { lv = '' }: { lv?: string } = useRoute().query
-  return lv
-})
 
 const {
   connect,
   connecting,
   connectedAddress,
   signer,
-  signingCosmWasmClient,
   balance,
   connBtnTxt
-} = useWallet(zkMePopupNode)
+} = useWallet()
 
 const {
-  chainId,
   cluster,
 } = useChain()
 
 const {
-  verify,
-  kycStatus,
-  checkingApproval,
-  needKyc,
-  accessToken
-} = useVerify(connectedAddress, lv)
+  widget,
+} = useZkMe(connect, connectedAddress, signer)
 
 const {
-  onFinished,
-  showPopup,
-} = useZkMe(connect, connectedAddress, signer, signingCosmWasmClient)
+  kycStatus,
+  checkingApproval,
+} = useVerify(connectedAddress)
 
 const {
   stake,
@@ -49,41 +36,34 @@ const {
 const feature = computed(() => {
   return [`100M ${cluster.value.rpc.symbol} staked`, '0% deposit fees', 'Unstake instantly']
 })
-const popupUrl = computed(() => {
-  const { appId } = useMchConf()
-  return `${ZKME_POPUP_ORIGIN}?mchNo=${appId.value}&name=zkMe%20SDK%20DEMO&lv=${lv.value}&chainId=${chainId.value}&accessToken=${accessToken.value}`
-})
 
-onFinished((verifiedAddress, kycResults) => {
-  if (verifiedAddress !== connectedAddress.value) {
+widget.value.on('kycFinished', (kycResults) => {
+  console.log('widget kycFinished', kycResults)
+  const { isGrant, associatedAccount } = kycResults
+  if (associatedAccount !== connectedAddress.value) {
     return
   }
-  if (lv.value === '2') {
-    showPopup.value = false
-    kycStatus.value = 'valid'
-  } else {
-    kycResults === 'matching'
-      ? verify(connectedAddress.value)
-      : (kycStatus.value = 'invalid')
+  kycStatus.value = isGrant ? 'valid' : 'invalid'
+})
+
+widget.value.on('meidFinished', (meidResults) => {
+  console.log('widget meidFinished', meidResults)
+  const { isGrant, associatedAccount } = meidResults
+  if (associatedAccount !== connectedAddress.value) {
+    return
   }
+  kycStatus.value = isGrant ? 'valid' : 'invalid'
 })
 
 async function handleVerifyClick () {
-  // cosmos
-  if (cluster.value.type === 'cosmos') {
-    showPopup.value = true
-    return
-  }
-
-  // EVM
   if (window.ethereum.chainId === cluster.value.rpc.chainId) {
-    showPopup.value = true
+    widget.value.launch()
   } else {
     await switchChain()
     try {
       const rp = await signer.value?.provider.getNetwork()
       if (`0x${rp?.chainId.toString(16)}` === cluster.value.rpc.chainId) {
-        showPopup.value = true
+        widget.value.launch()
       }
     } catch (err: any) {
       console.log(err.message)
@@ -91,7 +71,7 @@ async function handleVerifyClick () {
         err.message.includes('network changed') &&
         new RegExp(`\\b => ${parseInt(cluster.value.rpc.chainId).toString()}\\b`).test(err.message)
       ) {
-        showPopup.value = true
+        widget.value.launch()
       }
     }
   }
@@ -121,7 +101,7 @@ async function handleVerifyClick () {
           :connected-address="connectedAddress"
           :checking-approval="checkingApproval"
           :kyc-status="kycStatus"
-          :kyc-type="lv"
+          :kyc-type="'1'"
           :animation="showAnimation"
           @verify="handleVerifyClick"
         />
@@ -136,14 +116,6 @@ async function handleVerifyClick () {
       />
     </div>
   </div>
-
-  <Transition name="fade">
-    <div class="popup-mask mui-fl-central" v-show="showPopup && needKyc">
-      <div class="popup-wrap">
-        <iframe v-if="needKyc" ref="zkMePopupNode" :src="popupUrl" width="100%" height="100%"></iframe>
-      </div>
-    </div>
-  </Transition>
 </template>
 
 <style src="@/assets/css/views/dapp-home.css" scoped>
