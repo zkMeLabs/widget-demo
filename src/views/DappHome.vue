@@ -46,15 +46,6 @@ widget.value.on('kycFinished', (kycResults) => {
   kycStatus.value = isGrant ? 'valid' : 'invalid'
 })
 
-widget.value.on('meidFinished', (meidResults) => {
-  console.log('widget meidFinished', meidResults)
-  const { isGrant, associatedAccount } = meidResults
-  if (associatedAccount !== connectedAddress.value) {
-    return
-  }
-  kycStatus.value = isGrant ? 'valid' : 'invalid'
-})
-
 async function handleVerifyClick () {
   if (window.ethereum.chainId === cluster.value.rpc.chainId) {
     widget.value.launch()
